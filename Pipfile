@@ -14,6 +14,7 @@ python-dotenv = "*"
 flask-script = "*"
 pyjwt = "*"
 flask-restplus = "*"
+flask-jwt-extended = "*"
 
 [requires]
 python_version = "3.8"

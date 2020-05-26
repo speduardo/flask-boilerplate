@@ -1,17 +1,36 @@
 import os
+from datetime import timedelta
 
 
 class Config(object):
-    DEBUG = False
+    DEBUG = os.getenv('DEBUG') or False
     TESTING = False
     ERROR_404_HELP = False
+    PORT = int(os.getenv('PORT', 5000))
     SECRET_KEY = os.getenv('SECRET_KEY') or 'my-hard-secret-key'
+
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY') or 'my-hard-secret-key'
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+        minutes=int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES'))
+    )
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(
+        days=int(os.getenv('JWT_REFRESH_TOKEN_EXPIRES'))
+    )
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
     DATABASE_CONNECT_OPTIONS = {}
+
+    ENABLED_MODULES = (
+        'auth',
+
+        'users',
+        'teams',
+
+        'api',
+    )
 
     @staticmethod
     def init_app(app):
