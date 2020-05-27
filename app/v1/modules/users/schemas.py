@@ -21,9 +21,10 @@ class BaseUserSchema(ModelSchema):
         fields = (
             User.id.key,
             User.username.key,
-            User.first_name.key,
-            User.middle_name.key,
-            User.last_name.key,
+            User.email.key,
+            #User.first_name.key,
+            #User.middle_name.key,
+            #User.last_name.key,
         )
         dump_only = (
             User.id.key,

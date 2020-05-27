@@ -1,6 +1,6 @@
 import jwt
 from flask import request, current_app
-from app.v1.modules.users.models import User
+from app.v1.modules.users.dto import User
 from .extensions.api import api_v1
 
 

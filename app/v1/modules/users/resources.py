@@ -1,18 +1,14 @@
 from flask_restplus import Resource, Namespace, fields
-from flask_restplus._http import HTTPStatus
-from . import schemas, parameters
-from .models import db, User, UserSchema
+from app.v1.extensions import db
+from .models import UserModel
+from .dto import User, UserSchema
+from .dao import UserDAO
 
 api = Namespace('users', description="Users")
-user = api.model('user', {
-    'email': fields.String(required=True, description='user email address'),
-    'username': fields.String(required=True, description='user username'),
-    'password': fields.String(required=True, description='user password')
-})
 
 
 @api.route('/')
-class Users(Resource):
+class UserList(Resource):
     """
     Manipulations with users.
     """
@@ -21,22 +17,23 @@ class Users(Resource):
     #@api.permission_required(permissions.AdminRolePermission())
     #@api.response(200, 'Success', schemas.BaseUserSchema(many=True))
     #@api.paginate()
-    @api.marshal_list_with(user, envelope='data')
+    @api.marshal_list_with(UserModel.model, envelope='data')
     def get(self):
         """
         List of users.
         Returns a list of users starting from ``offset`` limited by ``limit``
         parameter.
         """
-        return User.query.all()
+        userList = UserDAO().findAll()
+        return userList
 
     #@api.parameters(user)
     #@api.response(schemas.DetailedUserSchema())
     #@api.response(code=HTTPStatus.FORBIDDEN)
     #@api.response(code=HTTPStatus.CONFLICT)
     @api.doc('create_user')
-    @api.expect(user)
-    @api.marshal_with(user, code=201)
+    @api.expect(UserModel.model)
+    @api.marshal_with(UserModel.model, code=201)
     def post(self):
         """
         Create a new user.
@@ -47,27 +44,16 @@ class Users(Resource):
         #):
         #new_user = User(**args)
         #db.session.add(new_user)
-        userSchema = UserSchema()
-        load_data = userSchema.load(api.payload, session=db.session)
-        db.session.add(load_data)
-        return load_data, 201
+        #userSchema = UserSchema()
+        #load_data = userSchema.load(api.payload, session=db.session)
+        #db.session.add(load_data)
+        data = api.payload
+        new_user = UserSchema().load(api.payload)
+        db.session.add(new_user)
+        db.session.commit()
+        db.session.flush()
 
-
-@api.route('/signup-form')
-class UserSignupForm(Resource):
-    """
-    Use signup form helpers.
-    """
-
-    #@api.response(200, 'Success', schemas.UserSignupFormSchema())
-    def get(self):
-        """
-        Get signup form keys.
-        This endpoint must be used in order to get a server reCAPTCHA public key which
-        must be used to receive a reCAPTCHA secret key for POST /users/ form.
-        """
-        # TODO:
-        return {"recaptcha_server_key": "TODO"}
+        return new_user, 201
 
 
 @api.route('/<int:user_id>')
@@ -77,7 +63,7 @@ class UserSignupForm(Resource):
 #    description="User not found.",
 #)
 #@api.resolve_object_by_model(User, 'user')
-class UserByID(Resource):
+class User(Resource):
     """
     Manipulations with a specific user.
     """
@@ -113,6 +99,23 @@ class UserByID(Resource):
             #parameters.PatchUserDetailsParameters.perform_patch(args, user)
             db.session.merge(user)
         return user
+
+
+@api.route('/signup-form')
+class UserSignupForm(Resource):
+    """
+    Use signup form helpers.
+    """
+
+    #@api.response(200, 'Success', schemas.UserSignupFormSchema())
+    def get(self):
+        """
+        Get signup form keys.
+        This endpoint must be used in order to get a server reCAPTCHA public key which
+        must be used to receive a reCAPTCHA secret key for POST /users/ form.
+        """
+        # TODO:
+        return {"recaptcha_server_key": "TODO"}
 
 
 @api.route('/me')

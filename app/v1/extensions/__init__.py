@@ -21,8 +21,11 @@ db = SQLAlchemy()
 #from flask_login import LoginManager
 #login_manager = LoginManager()
 
-#from flask_marshmallow import Marshmallow
-#marshmallow = Marshmallow()
+from flask_migrate import Migrate
+migrate = Migrate()
+
+from flask_marshmallow import Marshmallow
+marshmallow = Marshmallow()
 
 #from .auth import OAuth2Provider
 #oauth2 = OAuth2Provider()
@@ -39,8 +42,10 @@ def init_app(app):
             #cross_origin_resource_sharing,
             db,
             #login_manager,
-            #marshmallow,
+            marshmallow,
             api,
             #oauth2,
     ):
         extension.init_app(app)
+
+    migrate.init_app(app, db)

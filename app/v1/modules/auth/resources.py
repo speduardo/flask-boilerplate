@@ -1,6 +1,7 @@
 from flask import current_app, request
 from flask_restplus import Resource, Namespace, fields
-from app.v1.modules.users.models import User
+from app.v1.modules.users.dto import User
+from app.v1.modules.users.models import UserModel
 from app.v1.modules.auth.models import RefreshToken
 from app.v1.extensions import db
 from app.v1.extensions.api import api_v1
@@ -11,13 +12,12 @@ import datetime
 import hashlib
 
 api = Namespace('auth', description="Authentication")
-
 register_model = api_v1.model('Register', {
     'username': fields.String(required=True),
     'password': fields.String(required=True)
 })
 
-return_token_model = api_v1.model('ReturnToken', {
+token_model = api_v1.model('ReturnToken', {
     'access_token': fields.String(required=True),
     'refresh_token': fields.String(required=True)
 })
@@ -32,7 +32,7 @@ class Register(Resource):
     PASSWORD_REGEXP = r'^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])[\w\d!@#$%_]{6,64}$'
 
     @api.expect(register_model, validate=True)
-    @api.marshal_with(User.user_resource_model)
+    @api.marshal_with(UserModel.model)
     @api.response(400, 'username or password incorrect')
     def post(self):
         if not re.search(self.USERNAME_REGEXP, api_v1.payload['username']):
@@ -56,7 +56,7 @@ class Register(Resource):
 @api.route('/login')
 class Login(Resource):
     @api.expect(register_model)
-    @api.response(200, 'Success', return_token_model)
+    @api.response(200, 'Success', token_model)
     @api.response(401, 'Incorrect username or password')
     def post(self):
         """
@@ -102,7 +102,7 @@ class Login(Resource):
 @api.route('/refresh')
 class Refresh(Resource):
     @api.expect(api_v1.model('RefreshToken', {'refresh_token': fields.String(required=True)}), validate=True)
-    @api.response(200, 'Success', return_token_model)
+    @api.response(200, 'Success', token_model)
     def post(self):
         _refresh_token = api_v1.payload['refresh_token']
 
