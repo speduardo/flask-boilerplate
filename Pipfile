@@ -15,6 +15,8 @@ flask-script = "*"
 pyjwt = "*"
 flask-restplus = "*"
 flask-jwt-extended = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
 
 [requires]
 python_version = "3.8"

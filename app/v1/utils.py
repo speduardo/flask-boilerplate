@@ -1,7 +1,7 @@
 import jwt
 from flask import request, current_app
-from app.v1.models.user import User
-from . import v1_api
+from app.v1.modules.users.models import User
+from .extensions.api import api_v1
 
 
 # required_token decorator
@@ -21,12 +21,12 @@ def token_required(f):
                 except (jwt.DecodeError, jwt.InvalidTokenError) as e:
                     raise e
                 except:
-                    v1_api.abort(401, 'Unknown token error')
+                    api_v1.abort(401, 'Unknown token error')
 
             except IndexError:
                 raise jwt.InvalidTokenError
         else:
-            v1_api.abort(403, 'Token required')
+            api_v1.abort(403, 'Token required')
         return f(*args, **kwargs, current_user=current_user)
 
     wrapper.__doc__ = f.__doc__

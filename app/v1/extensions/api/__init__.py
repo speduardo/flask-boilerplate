@@ -56,7 +56,7 @@ def init_app(app, **kwargs):
     """
     API extension initialization point.
     """
-    app.route('/swaggerui/<path:path>')(serve_swaggerui_assets)
+    #app.route('/swaggerui/<path:path>')(serve_swaggerui_assets)
 
     # Prevent config variable modification with runtime changes
-    api_v1.authorizations = deepcopy(app.config['AUTHORIZATIONS'])
+    #api_v1.authorizations = deepcopy(app.config['AUTHORIZATIONS'])

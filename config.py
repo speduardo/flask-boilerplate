@@ -3,10 +3,10 @@ from datetime import timedelta
 
 
 class Config(object):
-    DEBUG = os.getenv('DEBUG') or False
+    DEBUG = os.getenv('FLASK_DEBUG') or False
     TESTING = False
     ERROR_404_HELP = False
-    PORT = int(os.getenv('PORT', 5000))
+    PORT = int(os.getenv('FLASK_RUN_PORT', 5000))
     SECRET_KEY = os.getenv('SECRET_KEY') or 'my-hard-secret-key'
 
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY') or 'my-hard-secret-key'
@@ -27,7 +27,7 @@ class Config(object):
         'auth',
 
         'users',
-        'teams',
+        #'teams',
 
         'api',
     )
