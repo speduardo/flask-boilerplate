@@ -1,7 +1,7 @@
 from flask_restplus import fields
 from sqlalchemy import ForeignKey
-from app.v1.extensions import db
-from app.v1.extensions.api import api_v1
+from app.v1.core import db
+from app.v1.core.api import api_v1
 
 
 class Todo(db.Model):

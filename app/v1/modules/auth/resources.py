@@ -1,10 +1,10 @@
 from flask import current_app, request
 from flask_restplus import Resource, Namespace, fields
-from app.v1.modules.users.dto import User
+from app.v1.modules.users.daos import UserDAO
 from app.v1.modules.users.models import UserModel
 from app.v1.modules.auth.models import RefreshToken
-from app.v1.extensions import db
-from app.v1.extensions.api import api_v1
+from app.v1.core import db
+from app.v1.core.api import api_v1
 from app.v1.exceptions import ValidationException
 import re
 import jwt
@@ -44,10 +44,10 @@ class Register(Resource):
             raise ValidationException(error_field_name='password',
                                       message='6-64 symbols, required upper and lower case letters. Can contain !@#$%_')
 
-        if User.query.filter_by(username=api_v1.payload['username']).first():
+        if UserDAO.query.filter_by(username=api_v1.payload['username']).first():
             raise ValidationException(error_field_name='username', message='This username is already exists')
 
-        user = User(username=api_v1.payload['username'], password=api_v1.payload['password'])
+        user = UserDAO(username=api_v1.payload['username'], password=api_v1.payload['password'])
         db.session.add(user)
         db.session.commit()
         return user
@@ -66,7 +66,7 @@ class Login(Resource):
         'exp' (expiration date of the token),
         'iat' (the time the token is generated)
         """
-        user = User.query.filter_by(username=api_v1.payload['username']).first()
+        user = UserDAO.query.filter_by(username=api_v1.payload['username']).first()
         if not user:
             api.abort(401, 'Incorrect username or password')
 

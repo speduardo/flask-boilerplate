@@ -1,7 +1,7 @@
 import jwt
 from flask import request, current_app
-from app.v1.modules.users.dto import User
-from .extensions.api import api_v1
+from app.v1.modules.users.daos import UserDAO
+from .core.api import api_v1
 
 
 # required_token decorator
@@ -15,7 +15,7 @@ def token_required(f):
 
                 try:
                     token = jwt.decode(access_token, current_app.config['SECRET_KEY'])
-                    current_user = User.query.get(token['uid'])
+                    current_user = UserDAO.query.get(token['uid'])
                 except jwt.ExpiredSignatureError as e:
                     raise e
                 except (jwt.DecodeError, jwt.InvalidTokenError) as e:

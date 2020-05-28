@@ -17,6 +17,7 @@ flask-restplus = "*"
 flask-jwt-extended = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
+flask-bcrypt = "*"
 
 [requires]
 python_version = "3.8"

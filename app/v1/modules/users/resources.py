@@ -1,8 +1,8 @@
 from flask_restplus import Resource, Namespace, fields
-from app.v1.extensions import db
+from app.v1.core import db
 from .models import UserModel
-from .dto import User, UserSchema
-from .dao import UserDAO
+from .schemas import UserSchema
+from .daos import UserDAO
 
 api = Namespace('users', description="Users")
 
@@ -24,15 +24,15 @@ class UserList(Resource):
         Returns a list of users starting from ``offset`` limited by ``limit``
         parameter.
         """
-        userList = UserDAO().findAll()
-        return userList
+        user_list = UserDAO().get_all()
+        return user_list
 
     #@api.parameters(user)
     #@api.response(schemas.DetailedUserSchema())
     #@api.response(code=HTTPStatus.FORBIDDEN)
     #@api.response(code=HTTPStatus.CONFLICT)
     @api.doc('create_user')
-    @api.expect(UserModel.model)
+    @api.expect(UserModel.model_parameter)
     @api.marshal_with(UserModel.model, code=201)
     def post(self):
         """
@@ -48,12 +48,10 @@ class UserList(Resource):
         #load_data = userSchema.load(api.payload, session=db.session)
         #db.session.add(load_data)
         data = api.payload
-        new_user = UserSchema().load(api.payload)
-        db.session.add(new_user)
-        db.session.commit()
-        db.session.flush()
+        new_user = UserSchema().load(data)
+        user = UserDAO().create(new_user)
 
-        return new_user, 201
+        return user, 201
 
 
 @api.route('/<int:user_id>')

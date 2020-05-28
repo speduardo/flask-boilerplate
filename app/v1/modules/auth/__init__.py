@@ -3,7 +3,7 @@ Auth module
 ===========
 """
 #from app.extensions import login_manager, oauth2
-from app.v1.extensions.api import api_v1
+from app.v1.core.api import api_v1
 
 
 def load_user_from_request(request):

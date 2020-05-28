@@ -3,7 +3,7 @@ Users module
 ============
 """
 
-from app.v1.extensions.api import api_v1
+from app.v1.core.api import api_v1
 
 
 def init_app(app, **kwargs):

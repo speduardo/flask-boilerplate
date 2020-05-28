@@ -1,13 +1,11 @@
-from marshmallow import fields
-from sqlalchemy.orm import relationship
-from marshmallow_sqlalchemy import ModelConverter, SQLAlchemySchema, SQLAlchemyAutoSchema, auto_field, property2field
-from werkzeug.security import generate_password_hash
-from app.v1.extensions.api import api_v1
-from app.v1.extensions import db
+from flask_bcrypt import generate_password_hash
+from app.v1.core import db
+from app.v1.core.daos import BaseDAO
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class UserDAO(BaseDAO):
+    __tablename__ = 'user'
+
     username = db.Column(db.String(50))
     password_hash = db.Column(db.String(250))
     email = db.Column(db.String(length=120), unique=True, nullable=False)
@@ -27,16 +25,4 @@ class User(db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-
-class UserSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = User
-        exclude = ("password_hash",)
-
-        include_relationships = True
-        load_instance = True
-        transient = True
-
-    password = fields.Inferred()
+        self.password_hash = generate_password_hash(password).decode('utf-8')

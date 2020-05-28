@@ -6,8 +6,21 @@ User schemas
 from flask_marshmallow import base_fields
 from flask_marshmallow.schema import Schema
 from marshmallow_sqlalchemy import ModelSchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-from .models import User
+from .daos import UserDAO
+
+
+class UserSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = UserDAO
+        exclude = ("password_hash",)
+
+        #include_relationships = True
+        load_instance = True
+        transient = True
+
+    password = base_fields.Inferred()
 
 
 class BaseUserSchema(ModelSchema):
@@ -17,17 +30,17 @@ class BaseUserSchema(ModelSchema):
 
     class Meta:
         # pylint: disable=missing-docstring
-        model = User
+        model = UserDAO
         fields = (
-            User.id.key,
-            User.username.key,
-            User.email.key,
+            UserDAO.id.key,
+            UserDAO.username.key,
+            UserDAO.email.key,
             #User.first_name.key,
             #User.middle_name.key,
             #User.last_name.key,
         )
         dump_only = (
-            User.id.key,
+            UserDAO.id.key,
         )
 
 
@@ -38,7 +51,7 @@ class DetailedUserSchema(BaseUserSchema):
 
     class Meta(BaseUserSchema.Meta):
         fields = BaseUserSchema.Meta.fields + (
-            User.email.key,
+            UserDAO.email.key,
             #User.created.key,
             #User.updated.key,
             #User.is_active.fget.__name__,

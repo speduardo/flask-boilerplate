@@ -1,7 +1,7 @@
 from app import create_app
 import os
 from flask_script import Manager
-from app.v1.extensions import db
+from app.v1.core import db
 
 app = create_app(os.environ['FLASK_ENV'])
 manager = Manager(app)

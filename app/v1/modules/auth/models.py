@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey
-from app.v1.extensions import db
+from app.v1.core import db
 
 
 class RefreshToken(db.Model):

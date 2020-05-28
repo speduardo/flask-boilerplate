@@ -22,8 +22,8 @@ def create_app(config_type=None):
     #from .v1 import v1_blueprint
     #app.register_blueprint(v1_blueprint, url_prefix='/api/v1')
 
-    from .v1 import extensions
-    extensions.init_app(app)
+    from .v1 import core
+    core.init_app(app)
 
     from .v1 import modules
     modules.init_app(app)
