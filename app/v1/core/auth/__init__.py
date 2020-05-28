@@ -1,8 +1,9 @@
 from flask import jsonify
 from flask_jwt_extended import JWTManager
 
-from app.v1.modules.users.models import User
-from app.messages import MSG_INVALID_CREDENTIALS, MSG_TOKEN_EXPIRED
+from app.v1.messages import MSG_INVALID_CREDENTIALS, MSG_TOKEN_EXPIRED
+from app.v1.modules.users.daos import UserDAO
+
 
 jwt = JWTManager()
 
@@ -18,7 +19,7 @@ def init_app(app, **kwargs):
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):
-    user = User.objects.get(email=identity)
+    user = UserDAO.objects.get(email=identity)
 
     # Podemos extender as informações do usuaŕio adicionando
     # novos campos: active, roles, full_name e etc...

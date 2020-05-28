@@ -1,8 +1,3 @@
-import uuid
-import datetime
-from flask import json
-from enum import EnumMeta
-from flask_sqlalchemy.model import Model
 from app.v1.core import db
 
 
